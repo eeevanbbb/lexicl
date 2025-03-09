@@ -1,21 +1,31 @@
 import datetime
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
+from firebase import firebase
+import os
+import uuid
 
 app = Flask(__name__)
+firebase = firebase.FirebaseApplication(os.environ.get('FIREBASE_DB_URL'), None)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        if "create" in request.form:
+            game_id = str(uuid.uuid4())
+            new_game = {"name": request.form["game_name"], "id": game_id}
+            firebase.post("/games", new_game)
+            return redirect(url_for("game", game_id=game_id))
+    return render_template("index.html")
 
 
-@app.route("/")
-def root():
-    # For the sake of example, use static information to inflate the template.
-    # This will be replaced with real information in later steps.
-    dummy_times = [
-        datetime.datetime(2018, 1, 1, 10, 0, 0),
-        datetime.datetime(2018, 1, 2, 10, 30, 0),
-        datetime.datetime(2018, 1, 3, 11, 0, 0),
-    ]
-
-    return render_template("index.html", times=dummy_times)
+@app.route("/game/<game_id>")
+def game(game_id):
+    games = firebase.get('/games', None)
+    for game in games.values():
+        if game['id'] == game_id:
+            return render_template("game.html", game=game)
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

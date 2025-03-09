@@ -2,18 +2,19 @@
 
 <html>
 <head>
-  <title>Datastore and Firebase Auth Example</title>
+  <title>Lexicl</title>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-  <h1>Datastore and Firebase Auth Example</h1>
+  <h1>Lexicl</h1>
 
-  <h2>Last 10 visits</h2>
-  {% for time in times %}
-    <p>{{ time }}</p>
-  {% endfor %}
+  <h2>New Game</h2>
+  <form method="POST">
+    <input type="text" name="game_name" placeholder="Game Name" required>
+    <button type="submit" name="create">Create Game</button>
+  </form>
 
 </body>
 </html>
